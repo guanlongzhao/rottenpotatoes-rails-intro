@@ -44,10 +44,10 @@ class MoviesController < ApplicationController
     end
     if sort_by == "title" 
       @movies = Movie.where(rating: @checked_ratings.keys).order("title ASC")
-      @title_class = "hilite"
+      @title_style = "hilite"
     elsif sort_by == "release_date"
       @movies = Movie.where(rating: @checked_ratings.keys).order("release_date ASC")
-      @release_date_class = "hilite"
+      @release_date_style = "hilite"
     else
       @movies = Movie.where(rating: @checked_ratings.keys)
     end
