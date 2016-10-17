@@ -12,17 +12,36 @@ class MoviesController < ApplicationController
 
   def index
     @all_ratings = Movie.unique_ratings
-    if params.key?("ratings")
+    
+    redirection = false
+    
+    if params.key?(:ratings)
       @checked_ratings = params[:ratings]
+    elsif session.key?(:ratings)
+      @checked_ratings = session[:ratings]
+      redirection = true
     else
       @checked_ratings = {}
       @all_ratings.each do |rating|
         @checked_ratings[rating] = 1
       end
     end
-        
+    session[:ratings] = @checked_ratings
     
-    sort_by = params[:sort_by]
+    if params.key?(:sort_by)
+      sort_by = params[:sort_by]
+    elsif session.key?(:sort_by)
+      sort_by = session[:sort_by]
+      redirection = true
+    else
+      sort_by = nil
+    end
+    session[:sort_by] = params[:sort_by]
+    
+    if redirection
+      flash.keep
+      redirect_to :sort_by => sort_by, :ratings => @checked_ratings
+    end
     if sort_by == "title" 
       @movies = Movie.where(rating: @checked_ratings.keys).order("title ASC")
       @title_class = "hilite"
